@@ -22,7 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="cpp.py" />
+    <Compile Include="cpp-unicode.py" />
     <Compile Include="test.py">
       <SubType>Code</SubType>
     </Compile>
