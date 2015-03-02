@@ -13,8 +13,22 @@ mapTemp['last']=tempset
 
 with open('test.txt', 'r') as f:
     for linex in f.readlines():
-        xyzret =linex.split(' ')
-        print(xyzret[3])
+        xyzret = linex.find('first')
+        charx = linex[xyzret:]
         ccdd = 1
 placeholder = 'abc'
+
+
+class demo(object):
+    def __init__(self):
+        pass;
+    def innerfunc(self):
+        pass;
+    def call(self):
+        self.innerfunc()
+    
+    
+
+alqaz = demo()
+alqaz.call()
 
