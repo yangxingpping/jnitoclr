@@ -13,27 +13,43 @@ class Demo:
             stringTemp  = ''                                #临时保存所有未处理的节点所有行
             for linex in f.readlines():
                 words = linex.split(' ')
-                if words[0].endswith('jmethodID'):  #这一行开始是查找一个函数名称的开始行
-                    stringTemp=''
-                    stringTemp += linex
-                    tempNodeType = 'jmethodID'
-                elif words[0].endswith('jclass'):    #这是一个查找类的开始行
-                    pass;
-                elif words[0].find('//')!=-1:        #这一行是以//开始的注释
+                if words[0].find('//')!=-1:        #这一行是以//开始的注释
                     self.outputStream.append(linex)
-                elif words[0].find('/*')!=-1:        #这一行是以/*开始的注释       
-                    pass;
-                elif words[0].endswith('jobject'):   #这是一行创建一个对象的开始
-                    pass;
-                elif linex.startswith('env->'):      #这一行是一个函数调用的开始
-                    pass;
-                elif linex.find('JNIEXPORT'):        #这是一个JNI导出函数的开始
-                    pass;
-                elif linex.endswith(';'):           #一个完整节点的结束  需要根据tempNodeMap中的情况来确定这一行是正常的c++调用还是jni调用的一部分
-                    if tempNodeType=='jmethodID':
-                        methodNodeList = stringTemp.split(',')
-                           
-                else:                               #其他情况，需要根据tempNodeMap中的情况来确定这一行是正常的c++调用还是jni调用的一部分           
-                    pass;
+                elif words[0].find('/*')!=-1:        #这一行是以/*开始的注释   
+                    tempNodeType='commit' 
+                    stringTemp += linex   
+                elif linex.endswith('*/'):
+                    if tempNodeType=='commit':
+                        stringTemp += linex
+                        self.outputStream += stringTemp
+                        tempNodeType=''
+                        stringTemp = ''
+                #elif linex.endswith('}'):           #一条语句的结束
+                #    if (tempNodeMap['{']==tempNodeMap['}'] and tempNodeMap.get('{',0)>0)
+                #        processOneFunction(stringTemp)
+                #    pass;
+                else:                               #其他情况，需要根据tempNodeMap中的情况来确定这一行是正常的c++调用还是jni调用的一部分
+                    if tempNodeType=='commit':
+                        stringTemp += linex   
+                    else:
+                        tempNodeMap['{'] = tempNodeMap.get('{', 0) + stringTemp.count('{')
+                        tempNodeMap['}'] = tempNodeMap.get('}',0) + stringTemp.count('}')
+                        if (tempNodeMap.get('{',0)>0 and tempNodeMap.get('{',0) == tempNodeMap.get('}',0)):                           
+                            stringTemp += linex
+                            processOneFunction(stringTemp)
+                            #tempNodeMap['{'] = 0
+                            #tempNodeMap['}'] = 0
+                            tempNodeMap.clear()
+                            self.classMap.clear()
         with open(self.filepathOut, 'w') as fo:
             fo.writelines(self.outputStream)        #把输出写到文件中
+    
+    #函数功能：把一个jni函数定义转换成CLR定义
+    #函数参数:stringOneFunction(in)jni函数定义完整字符串
+    #函数返回：...
+    def processOneFunction(self, stringOneFunction):      
+
+    #函数功能：把一条jni语句转换成CLR定义
+    #函数参数:stringOneNode(in)jni语句字符串
+    #函数返回：...
+    def processOneNode(self, stringOneNode):     
