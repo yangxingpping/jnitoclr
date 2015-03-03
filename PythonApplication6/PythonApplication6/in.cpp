@@ -1,6 +1,9 @@
 JNIEXPORT jobject JNICALL
 Java_com_yuandian_cc
-(JNIEnv *env, jobject, jstring queryid_jstr){
+(JNIEnv *env, jobject, 
+jstring queryid_jstr) /**/  {
+	//int  xyz; 
+	int next/*def */;
 	func(a,//cde
 	b,/*whate*/
 	c,/*fj
@@ -10,7 +13,7 @@ Java_com_yuandian_cc
 	/*multiline commit in one line*/
 	/*multiline commit in 
 	multiline 
-	*/
+	*/	
 }
 
 JNIEXPORT jobject JNICALL
