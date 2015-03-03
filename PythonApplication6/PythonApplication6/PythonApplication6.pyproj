@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5ad0077e-7211-4928-be14-c04f0e2bbaa6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>pypy.py</StartupFile>
+    <StartupFile>pypy-utf-8.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="cpp-unicode.py" />
+    <Compile Include="pypy-utf-8.py" />
     <Compile Include="pypy.py">
       <SubType>Code</SubType>
     </Compile>

@@ -27,6 +27,7 @@ class demo(object):
     def call(self):
         self.innerfunc()
     
+ffdc 
     
 
 alqaz = demo()

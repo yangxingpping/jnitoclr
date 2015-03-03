@@ -1,8 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 class Demo(object):
     def __init__(self, pathIn, passOut):
         self.filepathIn = pathIn                        #输入的cpp文件路径
         self.filepathOut = passOut                  #输出的cpp文件路径
         self.functionSignature = ''                    #jni函数定义的签名
+        self.objectMap  ={}                            
        # self.classSet = set([])                     #需要使用的java类的集合
        # self.methodSet=set([])                      #需要调用的函数名称集合
         self.classMap = {}                           #需要使用的java类的集合（key为class名，value为class的方法的set)
@@ -61,7 +65,18 @@ class Demo(object):
     #函数参数:stringOneFunction(in)jni函数定义完整字符串
     #函数返回：...
     def processOneFunction(self, stringOneFunction):      
-        pass;
+        for linex in stringOneFunction.split('\n'):
+            tempNodeType = ''
+            stringTemp = ''
+            commitIndex = linex.find('//')
+            if commitIndex != -1:
+                leftChuck = linex[:commitIndex]
+                if len(leftChuck)>0:
+                    self.processOneNode(leftChuck)
+                else:
+                    pass;
+                self.processOneNode(linex[commitIndex:]
+      
     #函数功能：把一条jni语句转换成CLR定义
     #函数参数:stringOneNode(in)jni语句字符串
     #函数返回：...
