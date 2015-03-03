@@ -87,33 +87,7 @@ class Demo(object):
                         else:           #此行是注释的一部分
                             if linex.find('*/')!=-1:        #/**/注释结束,注意，注释行后面不能添加任何语句
                                 tempNodeType=''
-                    
-
-                    #words = linexStrip.split(' ')
-                    #if words[0].find('//')!=-1:        #这一行是以//开始的注释
-                    #    stringTemp += linex   
-                    #elif words[0].find('/*')!=-1:        #这一行是以/*开始的注释   
-                    #    tempNodeType='commit' 
-                    #    stringTemp += linex   
-                    #elif linex.find('*/')!=-1:
-                    #    if tempNodeType=='commit':
-                    #        stringTemp += linex       
-                    #        tempNodeType=''
-                    #else:                               #其他情况，需要根据tempNodeMap中的情况来确定这一行是正常的c++调用还是jni调用的一部分
-                    #    if tempNodeType=='commit':
-                    #        stringTemp += linex   
-                    #    else:
-                    #        tempNodeMap['{'] = tempNodeMap.get('{', 0) + linex.count('{')
-                    #        tempNodeMap['}'] = tempNodeMap.get('}',0) + linex.count('}')
-                    #        if (tempNodeMap.get('{',0)>0 and tempNodeMap.get('{',0) == tempNodeMap.get('}',0)):                           
-                    #            stringTemp += linex
-                    #            self.processOneFunction(stringTemp)
-                    #            tempNodeMap.clear()
-                    #            stringTemp=''
-                    #            self.functionSignature=''
-                    #            self.classMap.clear()
-                    #        else :
-                    #            stringTemp += linex
+ 
                 else:           #在一个函数的定义之外，或者一个函数的开始
                     if linex.startswith('JNIEXPORT'):
                         tempNodeType = 'functionSignature'
@@ -141,49 +115,34 @@ class Demo(object):
         tempNodeType = ''
         stringTemp = ''  
         for linex in stringOneFunction.split('\n'):
-            linexStrip = linex.strip('\t')
-            if linexStrip =='{':
-                stringTemp += linex
-                self.processOneNode(stringTemp)
-                stringTemp=''         
-            elif commitIndex!=-1:
-                tempNodeType='commit'
-                stringTemp += linex[:commitIndex]
-                rightchuck = linex[commitIndex+2:]
-                if stringTemp.endswith(';'):
-                    self.processOneNode(stringTemp)
-                    stringTemp = ''
-                else:
-                    rightcommit = rightchuck.find('*/')
-                    if rightcommit!=-1:
-                        stringTemp += rightchuck[rightcommit+2:]
-                        self.processOneNode(stringTemp)
-                        stringTemp=''
-                        tempNodeType=''
-                    else:
-                        pass;
-            else:
-                if tempNodeType=='commit':
-                    if linex.find('*/')!=-1:
-                        tempNodeType=''
-                    else:
-                        pass;
-                else:                               
-                    commitIndex = linex.find('//')
-                    if commitIndex != -1:       #在一行中有//的情况
-                        stringTemp += linex[:commitIndex]
-                        if stringTemp.endswith(';') or stringTemp.endswith('{') or stringTemp.endswith('}'):
-                            self.processOneNode(stringTemp)
-                            stringTemp = ''    
-                        else:
-                            pass;
-                    else:
-                        stringTemp += linex
-                        if stringTemp.endswith(';') or stringTemp.endswith('{') or stringTemp.endswith('}'):
-                            self.processOneNode(stringTemp)
-                            stringTemp = ''
-                        else:
-                            pass;
+            OneLine = stringTemp + linex +'\n'
+            stringTemp = OneLine
+
+            braceIndexL = OneLine.find('{')
+            braceIndexR = OneLine.find('}')
+            semicolon   = OneLine.find(';')
+            while braceIndexL != -1 or braceIndexR != -1 or semicolon != -1:
+                stringTemp = ''
+                minNumber = min(x for x in (semicolon, braceIndexL, braceIndexR) if x>-1)
+                self.processOneNode(OneLine[:minNumber+1])
+                OneLine = OneLine[minNumber+1:]
+                braceIndexL = OneLine.find('{')
+                braceIndexR = OneLine.find('}')
+                semicolon   = OneLine.find(';')
+             
+          #  linexStrip = linex.strip('\t')
+           
+            #if linexStrip =='{':
+            #    stringTemp += linex
+            #    self.processOneNode(stringTemp)
+            #    stringTemp=''         
+            #else:                           
+            #    stringTemp += linex
+            #    if stringTemp.endswith(';') or stringTemp.endswith('{') or stringTemp.endswith('}'):
+            #        self.processOneNode(stringTemp)
+            #        stringTemp = ''
+            #    else:
+            #        pass;
 
       
     #函数功能：把一条jni语句转换成CLR定义（；结尾的语句，{,}暂时不支持注释语句)
