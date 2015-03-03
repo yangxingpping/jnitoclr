@@ -9,6 +9,17 @@ jstring queryid_jstr) {
 	c,/*fj
 	mi*/
 	d);
+	if (xyz=1
+	)
+		int abc =32;
+	switch(ebc):
+	{
+		case 1:
+			;
+			break;
+		default:
+			break;
+	}
 	return nullptr;
 	/*multiline commit in one line*/
 	/*multiline commit in 

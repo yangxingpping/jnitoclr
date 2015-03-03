@@ -1,2 +1,3 @@
-cde = 'y\ty'
-print(len(cde))
+cde = 'y\ny'
+print(cde)
+print(cde.strip())

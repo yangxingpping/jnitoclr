@@ -145,12 +145,17 @@ class Demo(object):
             #        pass;
 
       
-    #函数功能：把一条jni语句转换成CLR定义（；结尾的语句，{,}暂时不支持注释语句)
+    #函数功能：把一条jni语句转换成CLR定义（；结尾的语句，{和}暂时不支持注释语句)
     #函数参数:stringOneNode(in)jni语句字符串
     #函数返回：...
     def processOneNode(self, stringOneNode):   
-        print(stringOneNode)  
-        pass;
+        if stringOneNode.find('{')!=-1 or stringOneNode.find('}') != -1:
+            print(stringOneNode)
+            self.outputStream += stringOneNode
+        else:       #以分号结尾的句子
+            NodeStrip = stringOneNode.replace('\n', '')
+            print(NodeStrip)
+            pass;
 
 alqaz = Demo('in.cpp', 'out.cpp')
 
