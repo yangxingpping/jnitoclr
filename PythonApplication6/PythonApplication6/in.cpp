@@ -2,10 +2,11 @@ JNIEXPORT jobject JNICALL
 Java_com_yuandian_cc
 (JNIEnv *env, jobject, 
 jstring queryid_jstr) { 
+	jobject udpsession_list_obj  = env->NewObject(class_list, list_init);
 	jclass class_list = env->FindClass("java/util/ArrayList");
 	jmethodID list_init  = env->GetMethodID(class_list, "<init>", "()V");
 	jmethodID list_init_add = env->GetMethodID(class_list, "add", "zzzzz");
-	jobject    udpsession_list_obj  = env->NewObject(class_list, list_init);
+	
 	
 	jclass item = env->FindClass("java/util/item");
 	jmethodID item_init_add = env->GetMethodID(item, "Fn", "zzzzz");

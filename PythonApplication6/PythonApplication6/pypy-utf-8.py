@@ -184,6 +184,9 @@ class Demo(object):
                         MethodInfo = (MethodInfo[0], methodName)
                         self.objectMap[equalLeft]=MethodInfo
                         pass;
+                    elif NodeStrip.find('NewObject')!=-1:
+
+                        pass;
                 else:                                   # env->callFn(1,2)
                     pass;
             else:                                           #正常c++语句
