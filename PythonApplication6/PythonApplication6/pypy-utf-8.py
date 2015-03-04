@@ -11,7 +11,7 @@ class Demo(object):
                                   'GetStringUTFChars':'const char*', 'GetMethodID':'jmethodID',
                                   'CallBooleanMethod':'jboolean', 'DeleteLocalRef':'void'}
         self.objectMap  ={}                         #所有对象到类类型的映射
-        self.objectToMethod={}                      #所有类型到函数集的映射                         
+        self.ClassToMethod={}                      #所有类型到函数集的映射                         
        # self.classSet = set([])                     #需要使用的java类的集合
        # self.methodSet=set([])                      #需要调用的函数名称集合
         self.classMap = {}                           #需要使用的java类的集合（key为class名，value为class的方法的set)
@@ -177,9 +177,12 @@ class Demo(object):
                         NodeStrip = NodeStrip.replace(' ','')
                         equalLeft = NodeStrip.split('=')[0]
                         fuckyou = NodeStrip.split('(')[1]
-                        className = fuckyou.split(',')[0]
+                        className = fuckyou.split(',')[0]   #ClassToMethod的key
                         methodName = fuckyou.split(',')[1]
                         methodName = methodName.replace('"', '')
+                        MethodInfo = self.objectMap.get(equalLeft)
+                        MethodInfo = (MethodInfo[0], methodName)
+                        self.objectMap[equalLeft]=MethodInfo
                         pass;
                 else:                                   # env->callFn(1,2)
                     pass;
