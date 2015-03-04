@@ -1,3 +1,5 @@
-cde = 'y\ny'
-print(cde)
-print(cde.strip())
+xyz = 'yang xing,ping'
+b = xyz.split(['',','])
+
+
+retx= 123

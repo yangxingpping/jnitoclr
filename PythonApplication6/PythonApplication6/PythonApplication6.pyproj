@@ -23,10 +23,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="cpp-unicode.py" />
-    <Compile Include="pypy-utf-8.py" />
-    <Compile Include="pypy.py">
+    <Compile Include="JNIType.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="pypy-utf-8.py" />
     <Compile Include="test.py">
       <SubType>Code</SubType>
     </Compile>

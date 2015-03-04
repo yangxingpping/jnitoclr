@@ -1,12 +1,17 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import JNIType as jniType
 
 class Demo(object):
     def __init__(self, pathIn, passOut):
         self.filepathIn = pathIn                        #输入的cpp文件路径
         self.filepathOut = passOut                  #输出的cpp文件路径
         self.functionSignature = ''                    #jni函数定义的签名
-        self.objectMap  ={}                            
+        self.functionToRetureMap={'FindClass':'jclass', 'NewObject':'jobject',
+                                  'GetStringUTFChars':'const char*', 'GetMethodID':'jmethodID',
+                                  'CallBooleanMethod':'jboolean', 'DeleteLocalRef':'void'}
+        self.objectMap  ={}                         #所有对象到类类型的映射
+        self.objectToMethod={}                      #所有类型到函数集的映射                         
        # self.classSet = set([])                     #需要使用的java类的集合
        # self.methodSet=set([])                      #需要调用的函数名称集合
         self.classMap = {}                           #需要使用的java类的集合（key为class名，value为class的方法的set)
@@ -154,8 +159,33 @@ class Demo(object):
             self.outputStream += stringOneNode
         else:       #以分号结尾的句子
             NodeStrip = stringOneNode.replace('\n', '')
-            print(NodeStrip)
-            pass;
+            blockFirst = NodeStrip.split(' ')
+            firstItem  = blockFirst[0].strip('\t')
+            if firstItem in jniType.JNIType:            #这是一条声明语句
+                self.objectMap[blockFirst[1]]=(firstItem,'')
+                NodeStrip = NodeStrip.replace(blockFirst[0], '')
+            if NodeStrip.find('env->'):                #这是一条jni语句,不包括jclass
+                if NodeStrip.find('='):                 # variable = env->callFn(1,2)
+                    if NodeStrip.find('FindClass')!=-1:
+                        ClassName = NodeStrip.split('"')[1].split('/')[-1]
+                        one = NodeStrip.split('=')[0].strip(' ')
+                        ClassInfo = self.objectMap.get(one)
+                        ClassInfoUpdate = (ClassInfo[0], ClassName)
+                        self.objectMap[one] = ClassInfoUpdate
+                        pass;
+                    elif NodeStrip.find('GetMethodID')!=-1:
+                        NodeStrip = NodeStrip.replace(' ','')
+                        equalLeft = NodeStrip.split('=')[0]
+                        fuckyou = NodeStrip.split('(')[1]
+                        className = fuckyou.split(',')[0]
+                        methodName = fuckyou.split(',')[1]
+                        methodName = methodName.replace('"', '')
+                        pass;
+                else:                                   # env->callFn(1,2)
+                    pass;
+            else:                                           #正常c++语句
+                pass;
+            
 
 alqaz = Demo('in.cpp', 'out.cpp')
 
