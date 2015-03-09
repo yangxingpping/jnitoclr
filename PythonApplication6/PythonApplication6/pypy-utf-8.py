@@ -135,28 +135,32 @@ class Demo(object):
                 braceIndexR = OneLine.find('}')
                 semicolon   = OneLine.find(';')
              
-          #  linexStrip = linex.strip('\t')
-           
-            #if linexStrip =='{':
-            #    stringTemp += linex
-            #    self.processOneNode(stringTemp)
-            #    stringTemp=''         
-            #else:                           
-            #    stringTemp += linex
-            #    if stringTemp.endswith(';') or stringTemp.endswith('{') or stringTemp.endswith('}'):
-            #        self.processOneNode(stringTemp)
-            #        stringTemp = ''
-            #    else:
-            #        pass;
-
       
     #函数功能：把一条jni语句转换成CLR定义（；结尾的语句，{和}暂时不支持注释语句)
     #函数参数:stringOneNode(in)jni语句字符串
     #函数返回：...
     def processOneNode(self, stringOneNode):   
-        if stringOneNode.find('{')!=-1 or stringOneNode.find('}') != -1:
-            print(stringOneNode)
-            self.outputStream += stringOneNode
+        if stringOneNode.find('{')!=-1:   #有左大括号，需要分别对左括号的左边调用processOneNode,然后把{写入outputStream，再对{的右边调用processOneNode
+            if len(stringOneNode.replace(' ','').split('{')[0])>0:
+                processOneNode(self, stringOneNode.replace(' ','').split('{')[0])
+                pass;
+                self.outputStream += '{'
+                if len(stringOneNode.replace(' ','').split('{')[1])>0:
+                    processOneNode(stringOneNode.replace(' ','').split('{')[1])
+                    pass;
+                else:
+                    pass;
+        elif stringOneNode.find('}') != -1:
+            if len(stringOneNode.replace(' ','').split('}')[0])>0:
+                processOneNode(self, stringOneNode.replace(' ','').split('}')[0])
+                pass;
+                self.outputStream += '}'
+                if len(stringOneNode.replace(' ','').split('}')[1])>0:
+                    processOneNode(stringOneNode.replace(' ','').split('}')[1])
+                    pass;
+                else:
+                    pass;
+            pass;
         else:       #以分号结尾的句子
             NodeStrip = stringOneNode.replace('\n', '')
             blockFirst = NodeStrip.split(' ')
@@ -164,32 +168,14 @@ class Demo(object):
             if firstItem in jniType.JNIType:            #这是一条声明语句
                 self.objectMap[blockFirst[1]]=(firstItem,'')
                 NodeStrip = NodeStrip.replace(blockFirst[0], '')
+            else:
+                pass;
             if NodeStrip.find('env->'):                #这是一条jni语句,不包括jclass
-                if NodeStrip.find('='):                 # variable = env->callFn(1,2)
-                    if NodeStrip.find('FindClass')!=-1:
-                        ClassName = NodeStrip.split('"')[1].split('/')[-1]
-                        one = NodeStrip.split('=')[0].strip(' ')
-                        ClassInfo = self.objectMap.get(one)
-                        ClassInfoUpdate = (ClassInfo[0], ClassName)
-                        self.objectMap[one] = ClassInfoUpdate
-                        pass;
-                    elif NodeStrip.find('GetMethodID')!=-1:
-                        NodeStrip = NodeStrip.replace(' ','')
-                        equalLeft = NodeStrip.split('=')[0]
-                        fuckyou = NodeStrip.split('(')[1]
-                        className = fuckyou.split(',')[0]   #ClassToMethod的key
-                        methodName = fuckyou.split(',')[1]
-                        methodName = methodName.replace('"', '')
-                        MethodInfo = self.objectMap.get(equalLeft)
-                        MethodInfo = (MethodInfo[0], methodName)
-                        self.objectMap[equalLeft]=MethodInfo
-                        pass;
-                    elif NodeStrip.find('NewObject')!=-1:
-
-                        pass;
-                else:                                   # env->callFn(1,2)
-                    pass;
-            else:                                           #正常c++语句
+                FunctionName = NodeStrip[NodeStrip.find('env->')+len('env->'):].split('(')[0]  #获取函数名
+                jniType.FunctionToMethodName[FunctionName](stringOneNode)  #从map中找到对应函数调用的处理函数并调用
+                pass;
+            else:      #正常的c++语句
+                self.outputStream += stringOneNode;
                 pass;
             
 

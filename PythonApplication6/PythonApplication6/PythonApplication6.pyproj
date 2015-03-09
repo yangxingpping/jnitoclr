@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5ad0077e-7211-4928-be14-c04f0e2bbaa6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>pypy-utf-8.py</StartupFile>
+    <StartupFile>test.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
