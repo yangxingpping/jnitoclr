@@ -17,10 +17,11 @@ class Demo(object):
     def processOneFunc(self,strx):
         functionName = strx[strx.find('(JNICALL *')+len('(JNICALL *'): strx.find(')')]
 
-        backSpace = '\n\t'
-        functionDef = 'def ' + functionName + '(strx):'+backSpace
-        functionDef = functionDef + 'strRet=\'\'' +backSpace
-        functionDef = functionDef +'return strRet' +backSpace
+        NewLineSpace = '\n'
+        TabSpace = '    '
+        functionDef =TabSpace + 'def ' + functionName + '(self,strx):'+'\n'
+
+        functionDef = functionDef + TabSpace + TabSpace + 'pass;'+'\n'
         self.functiondefineList.append(functionDef)
         functionNameStr = '\"' + functionName + '\"'
         self.functionNameMap[functionNameStr] = functionName
@@ -31,13 +32,16 @@ class Demo(object):
             fjjds = self.functionNameMap.iteritems
 
             for (k,v) in self.functionNameMap.items():
-                linexyz = k + ':'+v +',\n'
+                linexyz = k + ':'+'Demo.'+v +',\n'
                 fo.write(linexyz)
                 pass;
+            fo.write('}\n')
+      
             for xyz in self.functiondefineList:
                 fo.write(xyz)
                 fo.write('\n')
                 pass;
+            
         pass;
 
 alqaz = Demo()
