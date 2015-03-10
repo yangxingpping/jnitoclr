@@ -10,6 +10,12 @@ class Demo(object):
         pass;
 
     def FindClass(self,strx):
+        if strx.find('"') != -1:    #说明FindClass函数参数是字符串
+            ClassType = self.objectMap[strx.split('=')[0]][0]
+            self.objectMap[strx.split('=')[0]] = (ClassType, strx.split('"')[1].split('/')[-1])
+            return ''
+        else:                       #说明参数是字符串变量
+            pass;
         pass;
 
     def FromReflectedMethod(self,strx):
@@ -76,6 +82,11 @@ class Demo(object):
         pass;
 
     def NewObject(self,strx):
+        EqualLeft = strx.split('=')[0]  #变量名称
+        ClassName = self.objectMap[strx.split('(')[1].split(',')[0]]
+        outputState = '%s^ %s = gcnew %s;'%(ClassName[1], EqualLeft, ClassName[1])
+        #self.functionSatesList.append(outputState)
+        return outputState
         pass;
 
     def NewObjectV(self,strx):
@@ -91,7 +102,12 @@ class Demo(object):
         pass;
 
     def GetMethodID(self,strx):
-        pass;
+        equalLeft = strx.split('=')[0]
+        functionName = strx.split('(')[1].split('"')[1]
+        functiontuple = self.objectMap[equalLeft]
+        functiontuple = (functiontuple[0],functionName)
+        self.objectMap[equalLeft] = functiontuple
+        return ''
 
     def CallObjectMethod(self,strx):
         pass;
@@ -103,7 +119,19 @@ class Demo(object):
         pass;
 
     def CallBooleanMethod(self,strx):
-        pass;
+        equalLeft = ''
+        equalRight = ''
+        if strx.find('=')!=-1:
+            equalLeft = strx[:strx.find('=')]
+            equalRight=strx[strx.find('=')+1:]
+        else:
+            equalRight=strx
+        strRet = ''
+        if equalLeft!='':
+            strRet = 'unsiged int %s = '%(equalLeft,)
+        strRet += self.CallVoidMethod(equalRight)
+        return strRet
+        
 
     def CallBooleanMethodV(self,strx):
         pass;
@@ -175,7 +203,14 @@ class Demo(object):
         pass;
 
     def CallVoidMethod(self,strx):
-        pass;
+        strAfterLeftColon = strx[strx.find('(')+1:]
+        objName = strAfterLeftColon.split(',')[0]
+        methodobj  = strAfterLeftColon.split(',')[1]
+        paramList = '(' + strAfterLeftColon.split(',')[2]
+        outputState = '%s->%s%s'%(objName, self.objectMap[methodobj][1], paramList) 
+        #self.functionSatesList.append(outputState)
+        return outputState;
+
 
     def CallVoidMethodV(self,strx):
         pass;
@@ -493,7 +528,12 @@ class Demo(object):
         pass;
 
     def NewStringUTF(self,strx):
-        pass;
+        equalLeft = strx.split('=')[0]
+        param = strx[strx.find('('):]
+        outputState = 'System::String^ %s = gcnew System::String%s' %(equalLeft, param)
+        #self.functionSatesList.append(outputState)
+        return outputState
+
 
     def GetStringUTFLength(self,strx):
         pass;
@@ -690,9 +730,10 @@ class Demo(object):
     def GetObjectRefType(self,strx):
         pass;      
     def __init__(self, pathIn, passOut):
-        self.filepathIn = pathIn                        #输入的cpp文件路径
+        self.filepathIn = pathIn                    #输入的cpp文件路径
         self.filepathOut = passOut                  #输出的cpp文件路径
-        self.functionSignature = ''                    #jni函数定义的签名
+        self.functionSignature = ''                 #jni函数定义的签名
+        self.functionSatesList = []                 #输出语句的链表
         self.functionToRetureMap={'FindClass':'jclass', 'NewObject':'jobject',
                                   'GetStringUTFChars':'const char*', 'GetMethodID':'jmethodID',
                                   'CallBooleanMethod':'jboolean', 'DeleteLocalRef':'void'}
@@ -1027,7 +1068,9 @@ class Demo(object):
                     pass;
 
             with open(self.filepathOut, 'w') as fo:
-                fo.writelines(self.outputStream)        #把输出写到文件中
+                for it in self.functionSatesList:        #把输出写到文件中
+                    fo.write(it)
+                    fo.write('\n')
     
     #函数功能：把一个jni函数定义转换成CLR定义
     #函数参数:stringOneFunction(in)jni函数定义完整字符串
@@ -1042,14 +1085,16 @@ class Demo(object):
             braceIndexL = OneLine.find('{')
             braceIndexR = OneLine.find('}')
             semicolon   = OneLine.find(';')
+            colonIndex  = OneLine.find(':')
             while braceIndexL != -1 or braceIndexR != -1 or semicolon != -1:
                 stringTemp = ''
-                minNumber = min(x for x in (semicolon, braceIndexL, braceIndexR) if x>-1)
+                minNumber = min(x for x in (semicolon, braceIndexL, braceIndexR, colonIndex) if x>-1)
                 self.processOneNode(OneLine[:minNumber+1])
                 OneLine = OneLine[minNumber+1:]
                 braceIndexL = OneLine.find('{')
                 braceIndexR = OneLine.find('}')
                 semicolon   = OneLine.find(';')
+                colonIndex  = OneLine.find(':')
              
       
     #函数功能：把一条jni语句转换成CLR定义（；结尾的语句，{和}暂时不支持注释语句)
@@ -1060,7 +1105,7 @@ class Demo(object):
             #if len(stringOneNode.replace(' ','').split('{')[0])>0:
             #    processOneNode(self, stringOneNode.replace(' ','').split('{')[0])
             #    pass;
-             self.outputStream += '{'
+              self.functionSatesList.append('{')
                 #if len(stringOneNode.replace(' ','').split('{')[1])>0:
                 #    processOneNode(stringOneNode.replace(' ','').split('{')[1])
                 #    pass;
@@ -1070,7 +1115,8 @@ class Demo(object):
             #if len(stringOneNode.replace(' ','').split('}')[0])>0:
             #    processOneNode(self, stringOneNode.replace(' ','').split('}')[0])
             #    pass;
-             self.outputStream += '}'
+             #self.outputStream += '}'
+             self.functionSatesList.append('}')
             #    if len(stringOneNode.replace(' ','').split('}')[1])>0:
             #        processOneNode(stringOneNode.replace(' ','').split('}')[1])
             #        pass;
@@ -1079,21 +1125,31 @@ class Demo(object):
             #pass;
         else:       #以分号（; :)结尾的句子
             NodeStrip = stringOneNode.replace('\n', '')
+            NodeStrip = NodeStrip.replace('\t', ' ')
+            NodeStrip = NodeStrip.lstrip(' ')
+            NodeStrip = NodeStrip.lstrip('\t')
             blockFirst = NodeStrip.split(' ')
-            firstItem  = blockFirst[0].strip('\t')
+            firstItem  = blockFirst[0]
             if firstItem in jniType.JNIType:            #这是一条声明语句
-                self.objectMap[blockFirst[1]]=(firstItem,'')
+                NodeStrip  = NodeStrip.replace(firstItem,'')
+                NodeStrip  = NodeStrip.lstrip(' ')
+                self.objectMap[NodeStrip.split(' ')[0]]=(firstItem,'')
                 NodeStrip = NodeStrip.replace(blockFirst[0], '')
             else:
                 pass;
-            if NodeStrip.find('env->'):                #这是一条jni语句,不包括jclass
+            if NodeStrip.find('env->') !=-1:                #这是一条jni语句,不包括jclass
+                NodeStrip = NodeStrip.replace(' ', '')
                 FunctionName = NodeStrip[NodeStrip.find('env->')+len('env->'):].split('(')[0]  #获取函数名
                 callFunc = self.FunctionToMethodName.get(FunctionName,'')
                 if callFunc != '':
-                    self.FunctionToMethodName[FunctionName](self,stringOneNode)  #从map中找到对应函数调用的处理函数并调用
+                    NodeStrip = NodeStrip.replace(' ', '')
+                    stateAlqaz = self.FunctionToMethodName[FunctionName](self,NodeStrip)  #从map中找到对应函数调用的处理函数并调用
+                    if stateAlqaz != '':
+                        self.functionSatesList.append(stateAlqaz)
                 pass;
             else:      #正常的c++语句
-                self.outputStream += stringOneNode;
+                #self.outputStream += stringOneNode;
+                self.functionSatesList.append(stringOneNode)
                 pass;
     
 

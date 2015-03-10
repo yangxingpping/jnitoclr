@@ -2,8 +2,10 @@ JNIEXPORT jobject JNICALL
 Java_com_yuandian_cc
 (JNIEnv *env, jobject, 
 jstring queryid_jstr) { 
-	jobject udpsession_list_obj  = env->NewObject(class_list, list_init);
+	
 	jclass class_list = env->FindClass("java/util/ArrayList");
+	jobject udpsession_list_obj  = env->NewObject(class_list, list_init);
+	
 	jmethodID list_init  = env->GetMethodID(class_list, "<init>", "()V");
 	jmethodID list_init_add = env->GetMethodID(class_list, "add", "zzzzz");
 	
@@ -15,7 +17,7 @@ jstring queryid_jstr) {
 	
 	env->CallVoidMethod(udpsession_obj, item_init_add, jstrItem);
 	
-	env->CallBooleanMethod(udpsession_list_obj, list_init_add, udpsession_obj);
+	jboolean bRetxyz = env->CallBooleanMethod(udpsession_list_obj, list_init_add, udpsession_obj);
 	
 	int next/*def */;
 	func(a,//cde
@@ -34,7 +36,7 @@ jstring queryid_jstr) {
 		default:
 			break;
 	}
-	return nullptr;
+	return udpsession_list_obj;
 	/*multiline commit in one line*/
 	/*multiline commit in 
 	multiline 
