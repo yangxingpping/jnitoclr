@@ -2,7 +2,7 @@ JNIEXPORT jobject JNICALL
 Java_com_yuandian_cc
 (JNIEnv *env, jobject, 
 jstring queryid_jstr) { 
-	
+	const char* getstrUTF = env->GetStringUTFChars(queryid_jstr, NULL);
 	jclass class_list = env->FindClass("java/util/ArrayList");
 	jobject udpsession_list_obj  = env->NewObject(class_list, list_init);
 	

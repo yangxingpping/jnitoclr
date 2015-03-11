@@ -539,6 +539,15 @@ class Demo(object):
         pass;
 
     def GetStringUTFChars(self,strx):
+        equalLeft = strx.split('=')[0]
+        objInfo = self.objectMap[equalLeft]
+        jstr = strx[strx.find('(')+1:].split(',')[0]
+        objInfo = (objInfo[0], jstr)
+        self.objectMap[equalLeft]  = objInfo
+        param = strx[strx.find('('):]
+        outputState = '%s %s = marshal_as<std::string>(%s)' %(objInfo[0], equalLeft,jstr)
+        #self.functionSatesList.append(outputState)
+        return outputState
         pass;
 
     def ReleaseStringUTFChars(self,strx):
@@ -1127,14 +1136,13 @@ class Demo(object):
             NodeStrip = stringOneNode.replace('\n', '')
             NodeStrip = NodeStrip.replace('\t', ' ')
             NodeStrip = NodeStrip.lstrip(' ')
-            NodeStrip = NodeStrip.lstrip('\t')
-            blockFirst = NodeStrip.split(' ')
-            firstItem  = blockFirst[0]
+           # NodeStrip = NodeStrip.lstrip('\t')
+            equalLeft = NodeStrip.split('=')[0].strip(' ')
+            firstItem =equalLeft[:equalLeft.find(equalLeft.split(' ')[-1])].strip(' ')
             if firstItem in jniType.JNIType:            #这是一条声明语句
                 NodeStrip  = NodeStrip.replace(firstItem,'')
                 NodeStrip  = NodeStrip.lstrip(' ')
                 self.objectMap[NodeStrip.split(' ')[0]]=(firstItem,'')
-                NodeStrip = NodeStrip.replace(blockFirst[0], '')
             else:
                 pass;
             if NodeStrip.find('env->') !=-1:                #这是一条jni语句,不包括jclass
