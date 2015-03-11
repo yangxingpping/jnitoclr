@@ -1,3 +1,8 @@
+/*
+ * Class:     tdfd_New
+ * Method:    Hello
+ * Signature: (Ljava/lang/String;)V
+ */
 JNIEXPORT jobject JNICALL
 Java_com_yuandian_cc
 (JNIEnv *env, jobject, 

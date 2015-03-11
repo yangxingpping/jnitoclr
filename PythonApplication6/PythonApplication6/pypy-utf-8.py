@@ -982,6 +982,7 @@ class Demo(object):
        # self.methodSet=set([])                      #需要调用的函数名称集合
         self.classMap = {}                           #需要使用的java类的集合（key为class名，value为class的方法的set)
         self.outputStream = []                      #输出文件的临时保存数组
+        self.functionCommit=''                      #函数声明的注释
     
     #函数功能：把一行语句中的所有完整注释去掉
     #函数参数:linex --需要去掉注释的句子
@@ -1074,7 +1075,9 @@ class Demo(object):
 
                         else:
                             self.functionSignature += linex
-                    pass;
+                    else:   #这是函数申明的注释
+                        self.functionCommit += linex
+                        pass;
 
             with open(self.filepathOut, 'w') as fo:
                 for it in self.functionSatesList:        #把输出写到文件中
