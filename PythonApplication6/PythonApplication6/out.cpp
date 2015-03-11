@@ -1,4 +1,5 @@
 {
+const char* getstrUTF = marshal_as<std::string>(queryid_jstr);
 ArrayList^ udpsession_list_obj = gcnew ArrayList;
 item^ udpsession_obj = gcnew item;
 System::String^ jstrItem = gcnew System::String(unit->cde.c_str());

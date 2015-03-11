@@ -545,7 +545,7 @@ class Demo(object):
         objInfo = (objInfo[0], jstr)
         self.objectMap[equalLeft]  = objInfo
         param = strx[strx.find('('):]
-        outputState = '%s %s = marshal_as<std::string>(%s)' %(objInfo[0], equalLeft,jstr)
+        outputState = '%s %s = marshal_as<std::string>(%s);' %(objInfo[0], equalLeft,jstr)
         #self.functionSatesList.append(outputState)
         return outputState
         pass;
