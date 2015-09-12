@@ -22,7 +22,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="cpp-unicode.py" />
     <Compile Include="jniInfo_gen.py" />
     <Compile Include="JNIType.py">
       <SubType>Code</SubType>
