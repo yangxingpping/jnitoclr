@@ -1,13 +1,4 @@
-class demo(object):
-    def Hello(self,str):
-        print('hello, %s' %str)
-    def __init__(self):
-        self.Mapx = {'Hello':demo.Hello}
-        
-    
-    def call(self):
-        self.Mapx['Hello'](self, 'alqaz')
-       
+from testPackage import testPackage;
 
-cdd = demo()
-cdd.call()
+a = testPackage.alqaz('name', 11);
+a.print_info();
